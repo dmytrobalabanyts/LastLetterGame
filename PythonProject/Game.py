@@ -1,55 +1,67 @@
 import random
+import json
+import Utils
 
 class Game(object):
     """description of class"""
     def __init__(self, player1, player2, state_machine):
-        self._player1 = player1
-        self._player2 = player2
-        self._state_machine = state_machine
+        self.__players[0] = player1
+        self.__players[1] = player2
+        self.__state_machine = state_machine
 
-    def start(self):
-        self._game_is_going = True
+    def go(self):
+        self.__game_is_going = True
         random.seed()
-        if random.randint(0, 1):
-            self._current_player = self._player1
-        else:
-            self._current_player = self._player2
-        while(not self._word_accepted):
-            self._last_word = self._get_first_word()
-            answer = self._notify("your_turn", self._last_word)
-            self._translate_answer(answer)
+        current_player = random.randint(0, 1)
 
-        while(self._game_is_going):
-            while not self._validate_word(self._last_word):
-                answer = self._notify("repeat_turn", self._last_word)
-                translate_answer(answer)
+        while(not self.__word_accepted):
+            self.__last_word = self.__get_first_word()
+            answer = self.__notify(self.__players[current_player], "first_turn", self.__last_word)
+            self.__translate_answer(answer)
 
-            self._state._add_to_used_words(self._last_word)
-            _save_state()
+        while(self.__game_is_going):
+            if self.__word_accepted:
+                while not self.__validate_word(self.__last_word):
+                    answer = self.__notify(self.__players[current_player], "repeat_turn", self.__last_word)
+                    self.__translate_answer(answer)
 
-            if self._current_player is _player1:
-                self._current_player = _player2
+                self.__add_to_used_words(self.__last_word)
+                self.__save_state()
+
+                current_player = 1 - current_player
+
+                answer = self.__notify(self.__players[current_player], "your_turn", self.__last_word)
             else:
-                self._current_player = _player1
+                answer = self.__notify(self.__players[1 - current_player], "repeat_turn", self.__last_word)
+            self.__translate_answer(answer)
 
-            self._notify("your_turn", self._last_word)
-
-    def _get_first_word(self):
+    def __get_first_word(self):
         start_letter = 'abcdefghijklmnopqrstuvwxyz'[random.randint(0, 25)]
-        return 'You go first. Start with a word on ' + start_letter
+        return start_letter
 
-    def _notify(self, notification, data):
-        self._last_answer = self._current_player.notify('notification=' + notification + '; data=' + data)
+    def __translate_answer(self, answer):
+        if answer[0] == '-':
+            self.__word_accepted = False
+            return
+        self.__word_accepted = True
+        self.__last_word = answer
 
-    def _translate_answer(self, answer):
-        self._word_accepted = True
+    def __add_to_used_words(self, word):
+        self.__notify(self.__state_machine, 'used', word)
 
-    def _add_to_used_words(self, word):
-        self._state._add_to_used_words(word)
+    def __validate_word(self, word):
+        answer = self.__notify(self.__state_machine, 'validate', word)
+        result = json.loads(answer)
+        return result['answer'] == "validated"  
 
-    _player1 = None
-    _player2 = None
-    _state_machine = None
-    _word_accepted = False
-    _game_is_going = False
-    _last_word = ''
+    def __notify(self, address, notification, data):
+        return address.notify(Utils.format_command(notification, data))
+
+    def __save_state(self):
+        pass
+
+    __players = [None, None]
+    __state_machine = None
+    __word_accepted = False
+    __game_is_going = False
+    __last_word = ''

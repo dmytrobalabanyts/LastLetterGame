@@ -6,7 +6,7 @@ from User import *
 
 class Factory:
     def create_user(self, type):
-        return User()
+        return User(type)
 
     def create_dictionary(self, type, arguments):
         return Dictionary(arguments)
@@ -30,7 +30,7 @@ def init():
 def run():
     init()
 
-    game.start()
+    game.go()
     
 
 run()
