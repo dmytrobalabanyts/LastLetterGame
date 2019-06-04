@@ -31,6 +31,7 @@ def run():
     init()
 
     game.go()
+    print('Game is over!')
     
 
 run()

@@ -22,6 +22,7 @@ class Game(object):
         while(self.__game_is_going):
             if self.__word_accepted:
                 while not self.__validate_word(self.__last_word):
+                    self.__last_word = self.__previous_word
                     answer = self.__notify(self.__players[current_player], "repeat_turn", self.__last_word)
                     self.__translate_answer(answer)
 
@@ -32,6 +33,7 @@ class Game(object):
 
                 answer = self.__notify(self.__players[current_player], "your_turn", self.__last_word)
             else:
+                self.__last_word = self.__previous_word
                 answer = self.__notify(self.__players[1 - current_player], "repeat_turn", self.__last_word)
             self.__translate_answer(answer)
 
@@ -42,14 +44,20 @@ class Game(object):
     def __translate_answer(self, answer):
         if answer[0] == '-':
             self.__word_accepted = False
+        if answer[0] == '!':
+            self.__word_accepted = False
+            self.__game_is_going = False
             return
         self.__word_accepted = True
+        self.__previous_word = self.__last_word
         self.__last_word = answer
 
     def __add_to_used_words(self, word):
         self.__notify(self.__state_machine, 'used', word)
 
     def __validate_word(self, word):
+        if word[0] != self.__previous_word[-1]:
+            return False
         answer = self.__notify(self.__state_machine, 'validate', word)
         result = json.loads(answer)
         return result['answer'] == "validated"  
@@ -65,3 +73,4 @@ class Game(object):
     __word_accepted = False
     __game_is_going = False
     __last_word = ''
+    __previous_word = ''
