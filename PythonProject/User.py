@@ -1,4 +1,5 @@
 import json
+import Utils
 
 class User(object):
     """description of class"""
@@ -8,7 +9,7 @@ class User(object):
     def notify(self, string):
         notification = json.loads(string)
         if notification['command'] == 'first_turn':
-            self.__get_word('Your go first. Start from: ' + notification['data'])
+            self.__get_word('Your go first')
         elif notification['command'] == 'your_turn':
             self.__get_word('Your turn. Answer to: ' + notification['data'])
         elif notification['command'] == 'repeat_turn':
@@ -27,17 +28,19 @@ class User(object):
             self.__get_word(self.__answer 
                               + " doesn't exist. Find anoter answer to: "
                               + notification['data'])
-        return self.__answer
+        self.__save_state()
+        return Utils.format_notification('next_word', self.__answer)
     
     def __get_word(self, prompt):
             print (self.__name + '. ' + prompt)
             self.__input_answer()
             return self.__answer
 
-
     def __input_answer(self):
         self.__answer = input();
-        return self.__answer
+
+    def __save_state(self):
+        pass
 
     __answer = ''
     __name = 'Noname'

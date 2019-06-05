@@ -6,21 +6,20 @@ class State(object):
     def __init__(self, dictionary):
         self.__dictionary = dictionary
 
-    def __add_to_used_words(self, last_word):
-        self.__used_words.add(last_word)
-
     def notify(self, string):
         notification = json.loads(string)
         if notification['command'] == 'validate':
-            result = self.__word_validator(notification['data'])
-            if result == 'valid':
-                return '{"answer": "validated"}'
-            elif result == 'already_used':
-                return '{"answer": "already_used"}'
-            elif result == 'not_exist':
-                return '{"answer": "not_exist"}'
-        elif notification['command'] == 'used':
-            self.__add_to_used_words(notification['data'])
+            valid = self.__word_validator(notification['data'])
+            if valid == 'valid':
+                self.__add_to_used_words(notification['data'])
+                result = '{"answer": "validated"}'
+            elif valid == 'already_used':
+                self.__add_to_used_words(notification['data'])
+                result = '{"answer": "already_used"}'
+            elif valid == 'not_exist':
+                result = '{"answer": "not_exist"}'
+            self.__save_state()
+            return result
 
     def __word_validator(self, word):
         word_is_correct = True
@@ -31,11 +30,25 @@ class State(object):
         else:
             return 'valid'
 
+    def __add_to_used_words(self, last_word):
+        self.__used_words.add(last_word)
+
     def __word_exists(self, word):
-        return True
+        answer = self.__notify(self.__dictionary, Utils.format_notification('check', word))
+        result = json.loads(answer)
+        if result['command'] == 'answer' and result['data'] == 'exists':
+            return True
+        else:
+            return False
+
+    def __notify(self, address, notification):
+        return address.notify(notification)
 
     def __word_was_used(self, word):
         return word in self.__used_words
+
+    def __save_state(self):
+        pass
 
     __dictionary = None
     __used_words = set()

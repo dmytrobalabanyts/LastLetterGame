@@ -1,7 +1,7 @@
 
 import json
 
-def format_command(command, data):
+def format_notification(command, data):
     result = {}
     result["command"] = command
     result["data"] = data
