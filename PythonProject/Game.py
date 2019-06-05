@@ -16,25 +16,37 @@ class Game(object):
 
         while(not self.__word_accepted):
             self.__last_word = self.__get_first_word()
-            answer = self.__notify(self.__players[current_player], "first_turn", self.__last_word)
+            answer = self.__notify_user(self.__players[current_player], "first_turn", self.__last_word)
             self.__translate_answer(answer)
 
         while(self.__game_is_going):
             if self.__word_accepted:
-                while not self.__validate_word(self.__last_word):
-                    self.__last_word = self.__previous_word
-                    answer = self.__notify(self.__players[current_player], "repeat_turn", self.__last_word)
-                    self.__translate_answer(answer)
+                result = ''
+                while not result == 'validated':
+                    result = self.__validate_word(self.__last_word)
+                    if result == 'validated':
+                        continue
+                    else:
+                        self.__last_word = self.__previous_word
+                        if result == 'rejected':
+                            answer = self.__notify_user(self.__players[current_player], 'repeat_turn', self.__last_word)
+                        elif result == 'wrong_letter':
+                            answer = self.__notify_user(self.__players[current_player], 'wrong_letter', self.__last_word)
+                        elif result == 'already_used':
+                            answer = self.__notify_user(self.__players[current_player], 'already_used', self.__last_word)
+                        elif result == 'not_exist':
+                            answer = self.__notify_user(self.__players[current_player], 'not_exist', self.__last_word)
+                        self.__translate_answer(answer)
 
                 self.__add_to_used_words(self.__last_word)
                 self.__save_state()
 
                 current_player = 1 - current_player
 
-                answer = self.__notify(self.__players[current_player], "your_turn", self.__last_word)
+                answer = self.__notify_user(self.__players[current_player], 'your_turn', self.__last_word)
             else:
                 self.__last_word = self.__previous_word
-                answer = self.__notify(self.__players[1 - current_player], "repeat_turn", self.__last_word)
+                answer = self.__notify_user(self.__players[1 - current_player], 'repeat_turn', self.__last_word)
             self.__translate_answer(answer)
 
     def __get_first_word(self):
@@ -44,23 +56,27 @@ class Game(object):
     def __translate_answer(self, answer):
         if answer[0] == '-':
             self.__word_accepted = False
-        if answer[0] == '!':
+        elif answer[0] == '!':
             self.__word_accepted = False
             self.__game_is_going = False
             return
-        self.__word_accepted = True
-        self.__previous_word = self.__last_word
-        self.__last_word = answer
+        else:
+            self.__word_accepted = True
+            self.__previous_word = self.__last_word
+            self.__last_word = answer
 
     def __add_to_used_words(self, word):
         self.__notify(self.__state_machine, 'used', word)
 
     def __validate_word(self, word):
         if word[0] != self.__previous_word[-1]:
-            return False
+            return 'wrong_letter'
         answer = self.__notify(self.__state_machine, 'validate', word)
         result = json.loads(answer)
-        return result['answer'] == "validated"  
+        return result['answer']  
+
+    def __notify_user(self, address, notification, data):
+        return self.__notify(address, notification, data)
 
     def __notify(self, address, notification, data):
         return address.notify(Utils.format_command(notification, data))
