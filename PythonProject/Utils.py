@@ -5,4 +5,4 @@ def format_notification(command, data):
     result = {}
     result["command"] = command
     result["data"] = data
-    return json.dumps(result)
+    return json.dumps(result)+" "
