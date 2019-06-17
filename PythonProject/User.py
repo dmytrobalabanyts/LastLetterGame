@@ -2,8 +2,28 @@ import json
 import Utils
 
 class User(object):
-    """description of class"""
-    def __init__(self, name):
+    """This class represents the basic functionality of a player entity.
+    The real platyer should be a child class of the User.
+    Possible commands:
+        command - 'first_turn'
+        data - none
+        
+        command - 'your_turn'
+        data - word to answer
+        
+        command - 'repeat_turn'
+        data - word to answer
+        
+        command - 'wrong_letter'
+        data - word to answer
+        
+        command - 'already_used'
+        data - word to answer
+        
+        command - 'not_exist'
+        data - word to answer
+        """
+    def __init__(self, name, restore = False):
         self.__name = name
 
     def notify(self, string):
@@ -37,9 +57,14 @@ class User(object):
             return self.__answer
 
     def __input_answer(self):
-        self.__answer = input();
+        self.__answer = ""
+        while self.__answer.__len__() == 0:
+            self.__answer = input();
 
     def __save_state(self):
+        pass
+
+    def __restore_state(self):
         pass
 
     __answer = ''

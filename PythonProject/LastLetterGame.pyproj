@@ -37,6 +37,7 @@
     <Compile Include="main.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="utest_utils.py" />
     <Compile Include="Utils.py">
       <SubType>Code</SubType>
     </Compile>

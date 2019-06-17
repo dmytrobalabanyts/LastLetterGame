@@ -3,13 +3,16 @@ import json
 import Utils
 
 class Game(object):
-    """description of class"""
-    def __init__(self, player1, player2, state_machine):
+    """The main class that provides functionality of the game. 
+    The only public method is 'go()' which ruhs a game"""
+    def __init__(self, player1, player2, state_machine, restore = False):
+        """Supply the game object with player objects and state machine object"""
         self.__players[0] = player1
         self.__players[1] = player2
         self.__state_machine = state_machine
 
     def go(self):
+        """The method runs the new game"""
         self.__last_word = ''
         result = 'first_turn'
         random.seed()
@@ -57,9 +60,13 @@ class Game(object):
             return answer['data']
 
     def __notify(self, address, notification, data):
+        self.__save_state()
         return address.notify(Utils.format_notification(notification, data))
 
     def __save_state(self):
+        pass
+
+    def __restore_state(self):
         pass
 
     __players = [None, None]

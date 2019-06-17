@@ -5,6 +5,7 @@ from User import *
 
 
 class Factory:
+    """This class intended to create a game entities for building the new game"""
     def create_user(self, type):
         return User(type)
 
@@ -20,6 +21,7 @@ class Factory:
 factory = Factory()
 
 def init():
+    """Constructs the game"""
     player1 = factory.create_user("Human")
     player2 = factory.create_user("Bot")
     dictionary = factory.create_dictionary("dictionary", [])

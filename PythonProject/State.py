@@ -2,11 +2,16 @@ import json
 import Utils
 
 class State(object):
-    """description of class"""
+    """This class implements the state machine for the "Last Letter" game
+    Possible commands:
+        command - 'validate'
+        data - word to be checked"""
     def __init__(self, dictionary):
         self.__dictionary = dictionary
 
     def notify(self, string):
+        """the only published method. All the class interface is provided
+        by its commands and their data supplied in the string"""
         notification = json.loads(string)
         if notification['command'] == 'validate':
             valid = self.__word_validator(notification['data'])
@@ -48,6 +53,9 @@ class State(object):
         return word in self.__used_words
 
     def __save_state(self):
+        pass
+
+    def __restore_state(self):
         pass
 
     __dictionary = None
