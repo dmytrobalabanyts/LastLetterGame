@@ -3,4 +3,4 @@ language: python
 python:
   - "3.7"
 
-script: python utest_utils.py
+script: python PythonProject/utest_utils.py
