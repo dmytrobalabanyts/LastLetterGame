@@ -2,7 +2,7 @@ from Game import *
 from State import *
 from Dictionary import *
 from User import *
-
+from BaseClass import BaseClass
 
 class Factory:
     """This class intended to create a game entities for building the new game"""

@@ -1,7 +1,8 @@
 import json
 import Utils
+from BaseClass import BaseClass
 
-class User(object):
+class User(BaseClass):
     """This class represents the basic functionality of a player entity.
     The real platyer should be a child class of the User.
     Possible commands:
@@ -48,7 +49,7 @@ class User(object):
             self.__get_word(self.__answer 
                               + " doesn't exist. Find anoter answer to: "
                               + notification['data'])
-        self.__save_state()
+        self._save_state()
         return Utils.format_notification('next_word', self.__answer)
     
     def __get_word(self, prompt):
@@ -60,12 +61,6 @@ class User(object):
         self.__answer = ""
         while self.__answer.__len__() == 0:
             self.__answer = input();
-
-    def __save_state(self):
-        pass
-
-    def __restore_state(self):
-        pass
 
     __answer = ''
     __name = 'Noname'

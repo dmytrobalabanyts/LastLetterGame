@@ -1,8 +1,9 @@
 import random
 import json
 import Utils
+from BaseClass import BaseClass
 
-class Game(object):
+class Game(BaseClass):
     """The main class that provides functionality of the game. 
     The only public method is 'go()' which ruhs a game"""
     def __init__(self, player1, player2, state_machine, restore = False):
@@ -34,7 +35,7 @@ class Game(object):
             elif result == 'validated':
                 self.__previous_word = self.__last_word
                 self.__last_word = answer
-                self.__save_state()
+                self._save_state()
                 self.__current_player = 1 - self.__current_player
                 answer = self.__notify_user(self.__players[self.__current_player], 'your_turn', self.__last_word)
             elif result == 'stop_game':
@@ -60,14 +61,8 @@ class Game(object):
             return answer['data']
 
     def __notify(self, address, notification, data):
-        self.__save_state()
+        self._save_state()
         return address.notify(Utils.format_notification(notification, data))
-
-    def __save_state(self):
-        pass
-
-    def __restore_state(self):
-        pass
 
     __players = [None, None]
     __current_player = 0

@@ -1,7 +1,8 @@
 import json
 import Utils
+from BaseClass import BaseClass
 
-class Dictionary(object):
+class Dictionary(BaseClass):
     """This class provides a possibility to check whether the word exists or not.
     Possible commands:
         command - 'check'
@@ -17,18 +18,12 @@ class Dictionary(object):
         if notification['command'] == 'check':
             word = notification['data'] + '\n'
             result = word in Dictionary.__words
-            self.__save_state()
+            self._save_state()
             if result:
                 return Utils.format_notification('answer', 'exists')
             else:
                 return Utils.format_notification('answer', 'not_exists')
     
-    def __save_state(self):
-        pass
-
-    def __restore_state(self):
-        pass
-
     __words = list()
 
 

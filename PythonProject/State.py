@@ -1,7 +1,8 @@
 import json
 import Utils
+from BaseClass import BaseClass
 
-class State(object):
+class State(BaseClass):
     """This class implements the state machine for the "Last Letter" game
     Possible commands:
         command - 'validate'
@@ -23,7 +24,7 @@ class State(object):
                 result = '{"answer": "already_used"}'
             elif valid == 'not_exist':
                 result = '{"answer": "not_exist"}'
-            self.__save_state()
+            self._save_state()
             return result
 
     def __word_validator(self, word):
@@ -51,12 +52,6 @@ class State(object):
 
     def __word_was_used(self, word):
         return word in self.__used_words
-
-    def __save_state(self):
-        pass
-
-    def __restore_state(self):
-        pass
 
     __dictionary = None
     __used_words = set()
