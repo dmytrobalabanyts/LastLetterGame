@@ -8,6 +8,7 @@ class State(BaseClass):
         command - 'validate'
         data - word to be checked"""
     def __init__(self, dictionary):
+        super().__init__()
         self.__dictionary = dictionary
 
     def notify(self, string):

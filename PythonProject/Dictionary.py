@@ -8,6 +8,7 @@ class Dictionary(BaseClass):
         command - 'check'
         data - word to be checked"""
     def __init__(self, arguments, restore = False):
+        super().__init__()
         with open('..\\Auxilary\\MainWordDatabase\\nouns.txt') as f:
             Dictionary.__words = f.readlines()
 

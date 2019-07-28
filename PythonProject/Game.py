@@ -1,16 +1,22 @@
 import random
 import json
 import Utils
-from BaseClass import BaseClass
+from BaseClass import BaseClass, common_queue
 
 class Game(BaseClass):
     """The main class that provides functionality of the game. 
     The only public method is 'go()' which ruhs a game"""
     def __init__(self, player1, player2, state_machine, restore = False):
         """Supply the game object with player objects and state machine object"""
+        super().__init__()
         self.__players[0] = player1
         self.__players[1] = player2
+        self.__player_names[player1] = 'Human'
+        self.__player_names[player2] = 'Bot'
         self.__state_machine = state_machine
+
+    def run(self):
+        self.go()
 
     def go(self):
         """The method runs the new game"""
@@ -55,8 +61,10 @@ class Game(BaseClass):
         return result['answer']  
 
     def __notify_user(self, address, notification, data):
-        a = self.__notify(address, notification, data)
-        answer = json.loads(a)
+        self.send(self.__player_names[address], Utils.format_notification(notification, data))
+        addr_from, response, tag = self.receive()
+
+        answer = json.loads(response)
         if answer['command'] == 'next_word':
             return answer['data']
 
@@ -65,6 +73,7 @@ class Game(BaseClass):
         return address.notify(Utils.format_notification(notification, data))
 
     __players = [None, None]
+    __player_names = {}
     __current_player = 0
     __state_machine = None
     __last_word = ''
